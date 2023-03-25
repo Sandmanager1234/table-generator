@@ -1,0 +1,26 @@
+* {
+    margin: 5px
+}
+
+
+.hidden {
+    display: none;
+}
+
+.flex_container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.opt_input {
+    display: none;
+}
+
+.rozn_input {
+    display: none;
+}
+
+lable {
+    display: block;
+}

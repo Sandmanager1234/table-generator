@@ -1,0 +1,8 @@
+backup
+excel_images
+__pycache__
+.venv
+html_patterns
+input
+output
+backup.txt

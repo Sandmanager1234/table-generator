@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <title>Прайсы</title>
+</head>
+
+<body>
+    <h2>Прайсы</h2>
+    <form id='form-price' action="post">
+        <div class="file_div">
+            <span>Первая таблица: </span>
+            <input name="table_one" type="file">
+        </div>
+        <div class="file_div">
+            <span>Вторая таблица: </span>
+            <input name="table_two" type="file">
+        </div>
+        <div class="checkers">
+            <span>Нужен Excel?</span>
+            <input id="need_excel" name="need_excel" type="checkbox">
+        </div>
+        <div class="hidden">
+            <div class="yuan_exchange">
+                <span>Курс Юаня: </span>
+                <input name="yuan" type="text">
+            </div>
+            <div class="generate">
+                <h4>Что генерим?</h4>
+                </br>
+                <lable>Только розницу
+                    <input name="excel_generation" type="radio" value="rozn"></lable>
+                <lable>Только опт
+                    <input name="excel_generation" type="radio" value="opt"></lable>
+                <lable>Обе
+                    <input name="excel_generation" type="radio" value="both"></lable>
+            </div>
+            <div class="flex_container">
+                <div class="opt_input">
+                    <h3>Таблица опта</h3>
+                    <lable>Размер наценки: <input name="opt_extra_charge" type="text"></lable>
+                    <lable>Округление <input name="opt_rounding" type="text"></lable>
+                    <lable>Текст: <textarea name="opt_text"></textarea></lable>
+                    <lable>Картинка: <input name="opt_img" type="file"></lable>
+                    <lable>Добавить html и pdf для опта: <input name="opt_extra_file" type="checkbox"></lable>
+                    <lable>Сгенерировать картинку с новинками для опта?: <input name="opt_upd_img" type="checkbox"></lable>
+                </div>
+                <div class="rozn_input">
+                    <h3>Таблица розницы</h3>
+                    <lable>Размер наценки: <input name="rozn_extra_charge" type="text"></lable>
+                    <lable>Округление <input name="rozn_rounding" type="text"></lable>
+                    <lable>Текст: <textarea name="rozn_text"></textarea></lable>
+                    <lable>Картинка: <input name="rozn_img" type="file"></lable>
+                    <lable>Добавить html и pdf для розницы: <input name="rozn_extra_file" type="checkbox"></lable>
+                    <lable>Сгенерировать картинку с новинками для розницы?: <input name="rozn_upd_img" type="checkbox"></lable>
+                </div>
+            </div>
+        </div>
+        <button id="submit">Отправить</button>
+    </form>
+    <script src="{{ url_for('static', path='prices_script.js') }}"></script>
+</body>
+
+</html>
