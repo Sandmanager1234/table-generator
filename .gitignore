@@ -1,8 +1,13 @@
 backup
 excel_images
 __pycache__
-.venv
+tenv
 html_patterns
 input
 output
 backup.txt
+req.txt
+table-reader.py
+credentials.json
+test.py
+table.py

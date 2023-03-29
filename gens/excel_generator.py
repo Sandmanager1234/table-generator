@@ -21,7 +21,6 @@ def download_img(url, art):
 
 
 def resize_image(sizes, art, form):
-
     img = Img.open(f'excel_images\\source\\pic_{clear(art)}.{form}')
     new_img = img.resize(sizes)
     new_img.save(f'excel_images\\small\\pic_{clear(art)}_small.{form}')
@@ -46,7 +45,7 @@ def create_price(price_type, cyn, margin, src_price, ri):
     return price
 
 
-def create_rozn_table():
+def create_rozn_table(r_text):
     wb = Workbook()
     ws = wb.active
 
@@ -73,10 +72,11 @@ def create_rozn_table():
 
     a1.font = ft_arial_blue
     a1.alignment = center_align
-    a1.value = 'Прайс лист наличие Москва Exclusive Only\n19.03.23\nCайт: https://exclusive-only.ru\nТелеграм канал: https://exclusive-only.ru/shoes/telegram-kanal\nАвито профиль и отзывы: https://vk.cc/chKyDn\nТелефон: +7-495-204-19-30'
+    a1.value = r_text
     a1.hyperlink = 'https://exclusive-only.ru/'
 
-    image = Img.open(r'input\picrozn\photo_2023-01-10_15-56-55.jpg')
+    im_file = os.listdir("input\\picrozn")[0]
+    image = Img.open(f'input\\picrozn\\{im_file}')
     new_img = image.resize((115, 115,))
     new_img.save(r'excel_images\exonly.png')
 
@@ -139,30 +139,38 @@ def create_rozn_table():
     return file_name
 
 
-def create_opt_table():
+def create_opt_table(o_text, flag):
+    abc = 'ABCDEFGHI'
     wb = Workbook()
     ws = wb.active
 
     file_name = f'output\\files\\opt-{date.today().strftime("%d%m%Y")}.xlsx'
-    # wb = load_workbook(file_name)
-    # ws = wb.active
 
     ws.merge_cells('A1:E1')
     ws.merge_cells('F1:H1')
 
     ws.row_dimensions[1].height = 82.5
 
-    ws.column_dimensions['A'].width = 11.86+0.72
-    ws.column_dimensions['B'].width = 12.43+0.72
-    ws.column_dimensions['C'].width = 11.29+0.72
-    ws.column_dimensions['D'].width = 16.14+0.72
-    ws.column_dimensions['E'].width = 18.71+0.72
-    ws.column_dimensions['F'].width = 78.86+0.72
-    ws.column_dimensions['G'].width = 20+0.72
-    ws.column_dimensions['H'].width = 12.57+0.72
-    ws.column_dimensions['I'].width = 11.86+0.72
+    ws.column_dimensions[f'{abc[0]}'].width = 11.86+0.72
+    ws.column_dimensions[f'{abc[1]}'].width = 12.43+0.72
+    ws.column_dimensions[f'{abc[2]}'].width = 11.29+0.72
+    i = 3
+    if flag == True:
+        ws.column_dimensions[f'{abc[i]}'].width = 16.14+0.72
+        i += 1
+    ws.column_dimensions[f'{abc[i]}'].width = 18.71+0.72
+    i += 1
+    ws.column_dimensions[f'{abc[i]}'].width = 78.86+0.72
+    i += 1
+    ws.column_dimensions[f'{abc[i]}'].width = 20+0.72
+    i += 1
+    ws.column_dimensions[f'{abc[i]}'].width = 12.57+0.72
+    i += 1
+    ws.column_dimensions[f'{abc[i]}'].width = 11.86+0.72
+    i += 1
 
-    image = Img.open(r'input\picopt\photo_2023-01-23_16-19-24.jpg')
+    im_file = os.listdir("input\\picopt")[0]
+    image = Img.open(f'input\\picopt\\{im_file}')
     new_img = image.resize((115, 115,))
     new_img.save(r'excel_images\opt.png')
 
@@ -173,7 +181,7 @@ def create_opt_table():
 
     a1.font = ft_arial_blue
     a1.alignment = center_align
-    a1.value = 'Прайс-лист, наличие Москва\n19.03.23'
+    a1.value = o_text
     a1.hyperlink = 'https://t.me/+ZGTZ-NvQUwllMmI1'
 
     a2 = ws['A2']
@@ -196,42 +204,47 @@ def create_opt_table():
     c2.fill = fill_black
     c2.alignment = cats_align
     c2.value = 'Опт цена'
+    i = 3
+    if flag == True:
+        d2 = ws[f'{abc[i]}2']
 
-    # d2 = ws['D2']
-
-    # d2.font = ft_arial_white
-    # d2.fill = fill_black
-    # d2.alignment = cats_align
-    # d2.value = 'Цена'
-
-    e2 = ws['D2']
+        d2.font = ft_arial_white
+        d2.fill = fill_black
+        d2.alignment = cats_align
+        d2.value = 'Цена'
+        i += 1
+    
+    e2 = ws[f'{abc[i]}2']
 
     e2.font = ft_arial_white
     e2.fill = fill_black
     e2.alignment = cats_align
     e2.value = 'Бренд'
+    i += 1
 
-    f2 = ws['E2']
+    f2 = ws[f'{abc[i]}2']
 
     f2.font = ft_arial_white
     f2.fill = fill_black
     f2.alignment = cats_align
     f2.value = 'Наименование'
+    i += 1
 
-    g2 = ws['F2']
+    g2 = ws[f'{abc[i]}2']
 
     g2.font = ft_arial_white
     g2.fill = fill_black
     g2.alignment = cats_align
     g2.value = 'Код артикула'
+    i += 1
 
-    h2 = ws['G2']
+    h2 = ws[f'{abc[i]}2']
 
     h2.font = ft_arial_white
     h2.fill = fill_black
     h2.alignment = cats_align
     h2.value = 'Наличие'
-
+    
     ws.freeze_panes = 'A3'
 
     wb.save(file_name)
@@ -239,30 +252,40 @@ def create_opt_table():
     return file_name
 
 
-def add_opt_row(i, file_name, row, opt_price_type, cny, opt_margin, opt_round_size, rozn_price_type, rozn_margin, rozn_round_size, new_tb):
+def add_opt_row(i, file_name, row, opt_price_type, cny, opt_margin, opt_round_size, rozn_price_type, rozn_margin, rozn_round_size, nv, p, flag):
+    abc = 'ABCDEFGHI'
     # Открыли табличку
     wb = load_workbook(file_name)
     # Выбрали лист
     ws = wb.active
     # Указали высоту строки, в которой мы будем работать
     ws.row_dimensions[i+3].height = 79.5
-
+    j = 0
     # Присваеваем переменным объект ячейки для удобства
-    sizeEU = ws[f'A{i+3}']
-    optPrice = ws[f'C{i+3}']
-    # price = ws[f'D{i+3}']
-    brand = ws[f'D{i+3}']
-    name = ws[f'E{i+3}']
-    article = ws[f'F{i+3}']
-    availability = ws[f'G{i+3}']
+    sizeEU = ws[f'{abc[j]}{i+3}']
+    j += 1
+    optPrice = ws[f'{abc[j]}{i+3}']
+    j += 1
+    if flag == True:
+        price = ws[f'{abc[j]}{i+3}']
+        j += 1
+    brand = ws[f'{abc[j]}{i+3}']
+    j += 1
+    name = ws[f'{abc[j]}{i+3}']
+    j += 1
+    article = ws[f'{abc[j]}{i+3}']
+    j += 1
+    availability = ws[f'{abc[j]}{i+3}']
+    j += 1
 
     # Указываем стили для ячеек
     sizeEU.font = ft_arial_black
     sizeEU.alignment = center_align
     optPrice.font = ft_calibri_black
     optPrice.alignment = center_align
-    # price.font = ft_calibri_black
-    # price.alignment = center_align
+    if flag == True:
+        price.font = ft_calibri_black
+        price.alignment = center_align
     brand.font = ft_calibri_black
     brand.alignment = center_align
     name.font = ft_calibri_black
@@ -272,35 +295,35 @@ def add_opt_row(i, file_name, row, opt_price_type, cny, opt_margin, opt_round_si
     availability.font = ft_arial_black
     availability.alignment = center_align
 
-
     # Заполняем ячейки
-    sizeEU.value = row[1][2]
-    brand.value = row[0][28]
-    name.value = row[1][1]
-    article.value = row[1][3]
-    availability.value = row[1][12]
+    sizeEU.value = row['Наименование артикула']
+    brand.value = p.loc[p['ID товара'] == row['ID товара'], ['Бренд']].values.item(0)
+    name.value = row['Наименование']
+    article.value = row['Код артикула']
+    availability.value = row['В наличии @Наличие в Москве']
 
-    src_price = float(row[1][6])
-
+    src_price = float(row['Цена'])
+    article_code = row['Код артикула']
     optPrice.value = create_price(opt_price_type, cny, opt_margin, src_price, opt_round_size)
-    # price.value = create_price(rozn_price_type, cny, rozn_margin, src_price, rozn_round_size)
-    form = row[0][35].split('.')[-1]
+    if flag == True:
+        price.value = create_price(rozn_price_type, cny, rozn_margin, src_price, rozn_round_size)
+    img_url = p.loc[p['ID товара'] == row['ID товара'], ['Изображения товаров']].values.item(0)
+    form = img_url.split('.')[-1]
 
-    if os.path.exists(f'excel_images\\small\\pic_{clear(row[1][3])}_small.{form}') == False:
-        download_img(row[0][35], row[1][3])
-        resize_image((111, 84,), row[1][3], form)
+    if os.path.exists(f'excel_images\\small\\pic_{clear(article_code)}_small.{form}') == False:
+        download_img(img_url, article_code)
+        resize_image((111, 84,), article_code, form)
 
-    img = Image(f'excel_images\\small\\pic_{clear(row[1][3])}_small.{form}')
+    img = Image(f'excel_images\\small\\pic_{clear(article_code)}_small.{form}')
 
     ws.add_image(img, f'B{i+3}')
-    if row in new_tb:
+    if article_code in nv['Код артикула'].to_numpy():
         new_img = Image(r'excel_images\new.jpg')
-        ws.add_image(new_img, f'H{i+3}')
-
+        ws.add_image(new_img, f'{abc[j]}{i+3}')
     wb.save(file_name)
 
 
-def add_rozn_row(i, file_name, row, price_type, cny, margin, round_size, new_tb):
+def add_rozn_row(i, file_name, row, price_type, cny, margin, round_size, nv, p):
 
     wb = load_workbook(file_name)
     ws = wb.active
@@ -333,32 +356,32 @@ def add_rozn_row(i, file_name, row, price_type, cny, margin, round_size, new_tb)
     article.font = ft_calibri_black
     article.alignment = center_align
 
-    sizeEU.value = row[1][2]
-    brand.value = row[0][28]
-    name.value = row[1][1]
-    article.value = row[1][3]
-    link.value = f'https://exclusive-only.ru/{row[1][25]}'
+    sizeEU.value = row['Наименование артикула']
+    brand.value = p.loc[p['ID товара'] == row['ID товара'], ['Бренд']].values.item(0)
+    name.value = row['Наименование']
+    article.value = row['Код артикула']
+    link.value = f'https://exclusive-only.ru/{row["Ссылка на витрину"]}'
 
-    src_price = float(row[1][6])
-
+    src_price = float(row['Цена'])
+    art_code = row['Код артикула']
     price.value = create_price(price_type, cny, margin, src_price, round_size)
-    form = row[0][35].split('.')[-1]
+    img_url = p.loc[p['ID товара'] == row['ID товара'], ['Изображения товаров']].values.item(0)
+    form = img_url.split('.')[-1]
 
-    if os.path.exists(f'excel_images\\small\\pic_{clear(row[1][3])}_small.{form}') == False:
-        download_img(row[0][35], row[1][3])
-        resize_image((111, 84,), row[1][3], form)
+    if os.path.exists(f'excel_images\\small\\pic_{clear(art_code)}_small.{form}') == False:
+        download_img(img_url, art_code)
+        resize_image((111, 84,), art_code, form)
 
-    img = Image(f'excel_images\\small\\pic_{clear(row[1][3])}_small.{form}')
+    img = Image(f'excel_images\\small\\pic_{clear(art_code)}_small.{form}')
 
     ws.add_image(img, f'B{i+3}')
-    if row in new_tb:
+    if art_code in nv['Код артикула'].to_numpy():
         new_img = Image(r'excel_images\new.jpg')
         ws.add_image(new_img, f'H{i+3}')
     
-    print(f'add excel row {i}/немного')
+    print(f'add excel row {i}')
 
     wb.save(file_name)
-
 
 
 def main():
