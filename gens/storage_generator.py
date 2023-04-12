@@ -1,5 +1,5 @@
 import os
-from classes.pd_table import pdTable
+from gens.classes.pd_table import pdTable
 
 def create_storages():
     folder = 'input\\table2\\'

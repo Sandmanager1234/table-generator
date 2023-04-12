@@ -1,7 +1,8 @@
 import os
 import pygsheets
+import pandas as pd
 from datetime import date
-from classes.table import Table
+from gens.classes.pd_table import pdTable
 
 
 def dround(i: float):
@@ -16,12 +17,9 @@ def create_first_table(cny):
 
     file = os.listdir('input\\table1')[0]
     path = f'input\\table1\\{file}'
-    output_name = f'output\\tables\\prices-{date.today().strftime("%d%m%Y")}.csv'
-    table_input = Table(path, 3)
-    table_output = Table(output_name, 1)
-    table_output.create_table()
+    inp_df = pdTable(path)
+    out_path = f'output\\tables\\prices-{date.today().strftime("%d%m%Y")}.csv'
 
-    tb = table_input.open_table()
     sh = client.open('Кроссовки')
 
     wks = sh.worksheet('title', 'Total (заказы)')
@@ -31,32 +29,24 @@ def create_first_table(cny):
     prices = wks.get_col(12)
 
     i = 1
-
+    data = []
     for status in statuses:
         if status == 'Выложен на сайт':
             article = str(articles[i-1])
-            for row in tb:
-                if row[3] == article:
-                    data = {
-                        'Код артикула': article,
-                        'ID артикула': row[5],
-                        'ID товара': row[14],
-                        'Цена': str(dround(float(prices[i].replace(',', '.'))/cny))
-                    }
-                    table_output.write_row(data)
-                    break
-                # else:
-                    # print(f'не нашло {article}')
-        i += 1
+            price = dround(float(prices[i].replace(',', '.'))/cny)
+            row = {'Код артикула': article,'Цена': price}
+            data.append(row.copy())
+    gdf = pd.DataFrame(data)
+    result = pd.merge(inp_df, gdf)
+    result.to_csv(out_path, sep=';', encoding='cp1251', lineterminator='\n', index=False)
     os.remove(path)
     #удалить выходной файл с сервера в боте
-    return output_name
+    return out_path
 
 def main():
     cyn = 10.06
     create_first_table(cyn)
     
-
 
 if __name__ == '__main__':
     main()

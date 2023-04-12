@@ -1,13 +1,13 @@
 const form_price = document.getElementById('form-price');
-const excel_checker = document.getElementById('need_excel');
+const news_checker = document.getElementById('upd_img');
 const div_generation = document.querySelector('div[class="generate"]');
 const generation_checkers = document.getElementsByName('excel_generation');
 
-excel_checker.addEventListener('click', () => {
-    if (excel_checker.checked) {
-        document.querySelector('.hidden').style.display = 'block';
+news_checker.addEventListener('click', () => {
+    if (news_checker.checked) {
+        document.getElementById('news_input').style.display = 'block';
     } else {
-        document.querySelector('.hidden').style.display = 'none';
+        document.getElementById('news_input').style.display = 'none';
     }
 })
 

@@ -9,17 +9,13 @@
 </head>
 <body>
     <h2>Склады</h2>
-    <form id='form-sklad' action="post">
+    <form id='form-sklad' action="/sklads-api/" method="post" enctype="multipart/form-data">
         <div class="file_div">
             <span>Файл: </span>
-            <input name="input_file" type="file">
+            <input name="input_file" type="file" id="finp">
         </div>
-        <div class="yuan_div">
-            <span>Курс Юаня: </span>
-            <input name="yuan" type="text">
-        </div>
-        <button type="submit">Отправить</button>
+        <button type="submit" id="send" disabled>Сгенерировать</button>
     </form>
-    <script src="{{ url_for('static', path='script.js') }}"></script>
+    <script src="static/disbutton.js"></script>
 </body>
 </html>

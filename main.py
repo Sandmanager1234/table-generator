@@ -1,21 +1,24 @@
+import shutil
+import uvicorn
 import aiofiles
 from fastapi import FastAPI, Request, status, HTTPException, File, UploadFile, Form, Depends, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
 from datetime import date
 
-from models.parsing_models import PriceMaker
+from gens import price_generator, shop_generator, storage_generator
+
+# from models.parsing_models import PriceMaker
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory='templates')
 
 app.mount('/static', StaticFiles(directory='static'), name='static')
-
 
 @app.get('/', response_class=HTMLResponse)
 async def index(req: Request):
@@ -31,21 +34,6 @@ async def skald(req: Request):
     })
 
 
-@app.post('/api/skalds')
-async def api_sklads(
-        input_file: UploadFile,
-        yuan: str = Form(default='100')
-):
-    async with aiofiles.open(input_file.filename, 'wb') as file:
-        await file.write(await input_file.read())
-
-    return JSONResponse({
-        'status': 'SUCCSES!',
-        'filename': input_file.filename,
-        'yuan': float(yuan)
-    })
-
-
 @app.get('/prices')
 async def prices(req: Request):
     return templates.TemplateResponse('prices.html', {
@@ -53,23 +41,55 @@ async def prices(req: Request):
     })
 
 
-@app.post('/api/prices_files')
-async def api_prices_files(files: list[UploadFile] | None = None):
-    if not os.path.isdir(f'files/{date.today()}'):
-        print(f'Create new folder with name {date.today()}')
-        os.mkdir(f'files/{date.today()}')
-    for file in files:
-        async with open(f'files/{date.today()}/{file.filename}', 'wb') as new_file:
-            await new_file.write(await file.read())
-
-
-@app.post('/api/prices')
-async def api_prices(
-        body: PriceMaker = Depends(PriceMaker.as_form)
-):
-    return JSONResponse({
-        'status': 'SUCCSESS!',
-        'table_one_name': table_one.filename,
-        'table_two_name': table_two.filename,
-        'price_maker': body.yuan
+@app.get('/excel')
+async def excel(req: Request):
+    return templates.TemplateResponse('excel.html', {
+        'request': req
     })
+
+@app.get('/success')
+async def succes_page(req: Request):
+    return templates.TemplateResponse(
+        'succes.html', 
+        {'request': req}
+        )
+
+@app.post('/price-api')
+async def get_params(input_file: UploadFile = Form(...), yuan: str = Form(...)):
+    if not input_file:
+        return RedirectResponse(url='/page1', headers={"Location": "/success"}, status_code=302)
+    else:
+        file_path = os.path.join("table", input_file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(input_file.file, buffer)
+        try:
+            out = price_generator.create_first_table(float(yuan))
+            # Не работает, там поменяли название страницы
+            print(out)
+        except Exception as ex:
+            print(ex)
+        return RedirectResponse(url="/success", headers={"Location": "/success"}, status_code=302)
+    
+
+@app.post('/sklads-api/')
+async def get_params(input_file: UploadFile = Form(...)):
+    if not input_file:
+        return RedirectResponse(url='/page1', headers={"Location": "/success"}, status_code=302)
+    else:
+        file_path = os.path.join("input\\table2\\", input_file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(input_file.file, buffer)
+        try:
+            out = storage_generator.create_storages()
+            print(out)
+        except Exception as ex:
+            print(ex)
+        return RedirectResponse(url="/success", headers={"Location": "/success"}, status_code=302)
+
+@app.post('/shop-api/')
+async def gen_files(files: list[UploadFile]):
+    return {'Status': 'SUPER'}
+
+
+# if __name__ == '__main__':
+#     uvicorn.run(app, port=8000)

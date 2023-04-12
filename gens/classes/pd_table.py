@@ -27,7 +27,7 @@ class pdTable:
                 self.df['ID товара'].isin(variants['ID товара'].to_numpy()),
                 ['ID товара', 'Изображения товаров', 'Бренд']
             ]
-        return variants, prods
+        return (variants, prods)
     
     def get_news(self):
         with open('backup/backup.txt', 'r', encoding='utf8') as file:
@@ -44,3 +44,12 @@ class pdTable:
         data = "\n".join(v['Код артикула'].tolist())
         with open(path, 'w', encoding='utf8') as file:
             file.write(data)
+
+    def get_goods_list(self, google: pd.DataFrame):
+        variants = self.df.loc[
+            self.df['Тип строки'] == 'variant', 
+            ['Код артикула', 'ID артикула', 'ID товара']
+            ]
+        variants = variants.astype({'ID артикула': int})
+        
+        return variants

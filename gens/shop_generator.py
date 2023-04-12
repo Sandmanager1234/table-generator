@@ -6,9 +6,9 @@ from datetime import datetime
 import pdfkit
 import imgkit
 import pandas as pd
-from classes.table import Table
-from classes.pd_table import pdTable
-from excel_generator import create_rozn_table, add_rozn_row, create_opt_table, add_opt_row, create_price
+from gens.classes.table import Table
+from gens.classes.pd_table import pdTable
+from gens.excel_generator import create_rozn_table, add_rozn_row, create_opt_table, add_opt_row, create_price
 
 
 def html_to_str(a: str):
@@ -29,8 +29,8 @@ def create_zip():
 def clear_cache():
     folders = [
         'excel_images/small/',
-        # 'output/files/',
-        # 'output/tables/',
+        'output/files/',
+        'output/tables/',
         'input/picopt/',
         'input/picrozn/',
         'input/table1/',
@@ -45,13 +45,14 @@ def clear(a: str):
     return re.sub(r'[\?\\\/\*\|\"<>]', '', a)
 
 
-def delim(v, srez: int):
+def delim(vp, srez: int):
+    v, p = vp
     counts = int(v.shape[0] / srez) + 1
     res = []
     for i in range(counts):
         start = i * 9
         end = 9 + i * 9
-        res.append(v.iloc[start:end])
+        res.append((v.iloc[start:end], p))
     return res
 
 
@@ -68,7 +69,7 @@ def create_excel_opt_table(vp_aviable: tuple[pd.DataFrame], vp_new: tuple[pd.Dat
     v, p = vp_aviable
     nv, vp = vp_new
     for i, row in enumerate(v.iterrows()):
-        add_opt_row(i, file_path, row[1], opt_p_type, cny, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, nv, p)
+        add_opt_row(i, file_path, row[1], opt_p_type, cny, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, nv, p, flag)
 
 
 def create_photo(path, i):
@@ -108,7 +109,10 @@ def create_rozn_html(vp_av: tuple[pd.DataFrame], vp_new: tuple[pd.DataFrame], cn
     fin_head = '\n'.join(rh)
 
     html_page.write(fin_head)
-    v, p = vp_av
+    try:
+        v, p = vp_av
+    except:
+        print(vp_av)
     nv, np = vp_new
     for row in v.iterrows():
         _row = row[1]
@@ -128,7 +132,7 @@ def create_rozn_html(vp_av: tuple[pd.DataFrame], vp_new: tuple[pd.DataFrame], cn
         rb[2] = rb[2].replace('src=""', f'src="data:image/png;base64,{encoded_string.decode()}"').replace("name=''", f"name='рисунок {j}'")
         rb[3] = rb[3].replace('></td>', f'>{create_price(p_type, cny, margin, _row["Цена"], r_size)}</td>') 
         rb[4] = rb[4].replace('href=""', f'href="https://exclusive-only.ru/{_row["Ссылка на витрину"]}"').replace("<span style='display:none'></span>", f"<span style='display:none'>.ru/{_row['Ссылка на витрину']}</span>")
-        rb[5] = rb[5].replace('></td>', f'>{p.loc[p["ID товара"] == _row["ID товара"]["Изображения товаров"]].values.item(0)}</td>') 
+        rb[5] = rb[5].replace('></td>', f'>{p.loc[p["ID товара"] == _row["ID товара"], ["Бренд"]].values.item(0)}</td>') 
         rb[6] = rb[6].replace('></td>', f'>{_row["Наименование"]}</td>') 
         rb[7] = rb[7].replace('></td>', f'>{_row["Код артикула"]}</td>')
         new_row = '\n'.join(rb) 
@@ -185,7 +189,7 @@ def create_opt_html(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, o
             encoded_string = base64.b64encode(image_file.read())
         if flag == True:
             rb = hrow.split('\n')
-            rb[1] = rb[1].replace('></td>', f'>{_row["Наименвание артикула"]}</td>')
+            rb[1] = rb[1].replace('></td>', f'>{_row["Наименование артикула"]}</td>')
             rb[2] = rb[2].replace('src=""', f'src="data:image/png;base64,{encoded_string.decode()}"').replace("name=''", f"name='рисунок {j}'")
             rb[4] = rb[4].replace('></td>', f'>{create_price(opt_p_type, cny, opt_margin, _row["Цена"], opt_r_size)}</td>') 
             if flag == True:
@@ -242,27 +246,27 @@ def create_tables(cny, rozn_p_type, rozn_margin, rozn_r_size, opt_p_type, opt_ma
     d.create_backup()
     for tb in del_news:
         if or_flag == 'o':
-            news_path = create_opt_html(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag, news = True)
+            news_path = create_opt_html(tb, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag, news = True)
         else:
             news_path = create_rozn_html(tb, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, text_news, news=True)
         create_photo(news_path, i)
         i += 1
-    os.remove('output\\files\\new-rozn-19032023.html')
+    os.remove(f'output\\files\\new-rozn-{datetime.today().strftime("%d%m%Y")}.html')
     create_zip()
 
 def main():
-    currency = 11.9
+    currency = 12.3
     r_p_type = 1
     r_m = 0
     rrs = 10
     opt = 2
     om = 0
     ors = 10
-    r_txt = 'Прайс лист наличие Москва Exclusive Only<br>19.03.23<br>Cайт: <a href="https://exclusive-only.ru/" style=\'text-decoration:none;\' target="_parent">https://exclusive-only.ru</a><br>Телеграм канал: <a href="https://exclusive-only.ru/shoes/telegram-kanal" style=\'text-decoration:none;\' target="_parent">https://exclusive-only.ru/shoes/telegram-kanal</a><br>Авито профиль и отзывы: <a href="https://vk.cc/chKyDn" style=\'text-decoration:none;\' target="_parent">https://vk.cc/chKyDn</a><br>Телефон: +7-495-204-19-30'
+    r_txt = 'Прайс лист наличие Москва Exclusive Only<br>08.04.23<br>Cайт: <a href="https://exclusive-only.ru/" style=\'text-decoration:none;\' target="_parent">https://exclusive-only.ru</a><br>Телеграм канал: <a href="https://exclusive-only.ru/shoes/telegram-kanal" style=\'text-decoration:none;\' target="_parent">https://exclusive-only.ru/shoes/telegram-kanal</a><br>Авито профиль и отзывы: <a href="https://vk.cc/chKyDn" style=\'text-decoration:none;\' target="_parent">https://vk.cc/chKyDn</a><br>Телефон: +7-495-204-19-30'
     o_txt = 'Прайс-лист, наличие Москва<br>06.03.23'
     n_txt = 'Новинки (Москва)<br>Поступление на склад в Москву'
     flag = True
-    or_flag = 'ro'
+    or_flag = 'r'
     create_tables(
         currency,
         r_p_type,

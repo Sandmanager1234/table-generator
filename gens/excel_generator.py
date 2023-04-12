@@ -4,7 +4,7 @@ import requests
 from datetime import date
 from PIL import Image as Img
 from openpyxl import Workbook, load_workbook
-from excel_styles import fill_black, ft_arial_black, ft_arial_white, center_align, cats_align, ft_arial_blue, ft_calibri_black, urls_align
+from gens.excel_styles import fill_black, ft_arial_black, ft_arial_white, center_align, cats_align, ft_arial_blue, ft_calibri_black, urls_align
 from openpyxl.drawing.image import Image
 
 
