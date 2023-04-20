@@ -6,7 +6,6 @@ from datetime import datetime
 import pdfkit
 import imgkit
 import pandas as pd
-from gens.classes.table import Table
 from gens.classes.pd_table import pdTable
 from gens.excel_generator import create_rozn_table, add_rozn_row, create_opt_table, add_opt_row, create_price
 
