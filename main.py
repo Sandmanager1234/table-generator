@@ -1,3 +1,4 @@
+#тест на синхронизацию
 import shutil
 import time
 import uvicorn
