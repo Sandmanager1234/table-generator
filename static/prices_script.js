@@ -1,52 +1,37 @@
-const form_price = document.getElementById('form-price');
-const news_checker = document.getElementById('upd_img');
-const div_generation = document.querySelector('div[class="generate"]');
-const generation_checkers = document.getElementsByName('excel_generation');
+const button = document.getElementById('send')
 
-news_checker.addEventListener('click', () => {
-    if (news_checker.checked) {
-        document.getElementById('news_input').style.display = 'block';
-    } else {
-        document.getElementById('news_input').style.display = 'none';
+var file = false
+var txt = false
+
+document.getElementById('finp').addEventListener('change', function(){
+    if( this.value){
+        check(true, txt);
+        file = true;
+      } else { 
+        check(false, txt);
+        file = false;
+      }
+})
+
+document.getElementById('currency').addEventListener('change', function(){
+  if( this.value) {
+      check(file, true);
+      txt = true;
+    } else { 
+      check(file, false);
+      txt = false;
     }
 })
 
-div_generation.addEventListener('click', () => {
-    let checked = null;
-    let rozn = document.querySelector('.rozn_input');
-    let opt = document.querySelector('.opt_input');
+function check(file, txt) {
+  if (file && txt) {
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
+}
 
-    for (const radio of generation_checkers) {
-        if (radio.checked) {
-            checked = radio;
-        }
-    }
-
-    switch (checked.value) {
-        case 'rozn':
-            rozn.style.display = 'block';
-            opt.style.display = 'none';
-            break;
-        case 'opt':
-            opt.style.display = 'block';
-            rozn.style.display = 'none';
-            break;
-        case 'both':
-            rozn.style.display = 'block';
-            opt.style.display = 'block';
-            break;
-    }
-})
-
-form_price.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    fetch('/api/prices', {
-        method: 'POST',
-        body: new FormData(form_price)
-    }).then((resp) => {
-        console.log(resp.text)
-    })
-
-
+button.addEventListener('click', function(){
+  let load = document.querySelector('.load');
+  load.style.visibility = 'visible';
 })

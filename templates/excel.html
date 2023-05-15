@@ -35,6 +35,9 @@
             <div class="flex_container">
                 <div class="opt_input">
                     <h3>Таблица опта</h3>
+                    <label>Тип наценки:</label>
+                    <label>Проценты<input name="opt_magin_type" type="radio" value="1"></label>
+                    <label>Надбавка<input name="opt_magin_type" type="radio" value="2"></label>
                     <lable>Размер наценки: <input name="opt_extra_charge" type="text"></lable>
                     <lable>Округление <input name="opt_rounding" type="text"></lable>
                     <lable>Текст: <textarea name="opt_text"></textarea></lable>
@@ -43,6 +46,9 @@
                 </div>
                 <div class="rozn_input">
                     <h3>Таблица розницы</h3>
+                    <label>Тип наценки:</label>
+                    <label>Проценты<input name="rozn_magin_type" type="radio" value="1"></label>
+                    <label>Надбавка<input name="rozn_magin_type" type="radio" value="2"></label>
                     <lable>Размер наценки: <input name="rozn_extra_charge" type="text"></lable>
                     <lable>Округление <input name="rozn_rounding" type="text"></lable>
                     <lable>Текст: <textarea name="rozn_text"></textarea></lable>
@@ -56,8 +62,10 @@
         </div>
         <button id="submit">Отправить</button>
     </form>
+    <div id="loadscreen" class="load">
+        <center><p>Загрузка...</p></center>
+    </div>
     <a href="/">На главную</a>
-    <script src="{{ url_for('static', path='prices_script.js') }}"></script>
+    <script src="{{ url_for('static', path='excel_script.js') }}"></script>
 </body>
-
 </html>

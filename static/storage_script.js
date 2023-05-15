@@ -7,3 +7,8 @@ document.getElementById('finp').addEventListener('change', function(){
         button.disabled = true;
       }
 })
+
+button.addEventListener('click', function(){
+  let load = document.querySelector('.load');
+  load.style.visibility = 'visible';
+})

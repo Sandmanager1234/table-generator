@@ -1,10 +1,11 @@
 import shutil
+import time
 import uvicorn
 import aiofiles
 from fastapi import FastAPI, Request, status, HTTPException, File, UploadFile, Form, Depends, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
@@ -25,6 +26,12 @@ async def index(req: Request):
     return templates.TemplateResponse('index.html', {
         'request': req
     })
+
+@app.get("/download/")
+async def download_file():
+    name = os.listdir('output/out')[0]
+    file_path = '//'.join(['output/out', name])
+    return FileResponse(path=file_path, filename=name)
 
 
 @app.get('/sklad', response_class=HTMLResponse)
@@ -66,6 +73,7 @@ async def get_params(input_file: UploadFile = Form(...), yuan: str = Form(...)):
             # out = price_generator.create_first_table(float(yuan))
             # Не работает, там поменяли название страницы
             # print(out)
+            time.sleep(30)
             pass
         except Exception as ex:
             print(ex)
@@ -81,14 +89,13 @@ async def get_params(input_file: UploadFile = Form(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(input_file.file, buffer)
         try:
-            out = storage_generator.create_storages()
-            print(out)
+            storage_generator.create_storages()
         except Exception as ex:
             print(ex)
         return RedirectResponse(url="/success", headers={"Location": "/success"}, status_code=302)
 
-@app.post('/shop-api/')
-async def gen_files(files: list[UploadFile]):
+@app.post('/excel-api/')
+async def gen_files():
     return {'Status': 'SUPER'}
 
 
