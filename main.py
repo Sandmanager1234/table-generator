@@ -50,7 +50,7 @@ async def excel(req: Request):
 @app.get('/success')
 async def succes_page(req: Request):
     return templates.TemplateResponse(
-        'succes.html', 
+        'success.html', 
         {'request': req}
         )
 
@@ -59,13 +59,14 @@ async def get_params(input_file: UploadFile = Form(...), yuan: str = Form(...)):
     if not input_file:
         return RedirectResponse(url='/page1', headers={"Location": "/success"}, status_code=302)
     else:
-        file_path = os.path.join("table", input_file.filename)
+        file_path = os.path.join("input\\table1", input_file.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(input_file.file, buffer)
         try:
-            out = price_generator.create_first_table(float(yuan))
+            # out = price_generator.create_first_table(float(yuan))
             # Не работает, там поменяли название страницы
-            print(out)
+            # print(out)
+            pass
         except Exception as ex:
             print(ex)
         return RedirectResponse(url="/success", headers={"Location": "/success"}, status_code=302)
