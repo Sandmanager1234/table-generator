@@ -38,12 +38,12 @@ div_generation.addEventListener('click', () => {
     }
 })
 
-form_price.addEventListener('submit', (e) => {
-    e.preventDefault();
-    fetch('/excel-api/', {
-        method: 'POST',
-        body: new FormData(form_price)
-    }).then((resp) => {
-        console.log(resp.text)
-    })
-})
+// form_price.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//     fetch('/excel-api/', {
+//         method: 'POST',
+//         body: new FormData(form_price)
+//     }).then((resp) => {
+//         console.log(resp.text)
+//     })
+// })

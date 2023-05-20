@@ -11,10 +11,17 @@
 
 <body>
     <h2>Прайсы</h2>
-    <form id='form-price' action="post">
+    <!-- <form id='file-upload' action="/execel-upload/" method="post" enctype="multipart/form-data">
         <div class="file_div">
             <span>Таблица: </span>
-            <input name="table_one" type="file">
+            <input name="table" type="file">
+            <button id="submit-file">Загрузить файл</button>
+        </div>
+    </form> -->
+    <form id="data-price" action="/excel-api/" method="post" enctype="multipart/form-data">
+        <div class="file_div">
+            <span>Таблица: </span>
+            <input name="table" type="file">
         </div>
         <div>
             <div class="yuan_exchange">
@@ -23,7 +30,6 @@
             </div>
             <div class="generate">
                 <h4>Что генерим?</h4>
-                </br>
                 <lable>Только розницу
                     <input name="excel_generation" type="radio" value="rozn"></lable>
                 <lable>Только опт
@@ -42,6 +48,7 @@
                     <lable>Округление <input name="opt_rounding" type="text"></lable>
                     <lable>Текст: <textarea name="opt_text"></textarea></lable>
                     <lable>Картинка: <input name="opt_img" type="file"></lable>
+                    <lable>Сгенерировать только с оптовыми ценами <input name="with_no_rozn" type="checkbox"></lable>
                     <lable>Добавить html и pdf для опта: <input name="opt_extra_file" type="checkbox"></lable>
                 </div>
                 <div class="rozn_input">
@@ -57,10 +64,10 @@
                 </div>
             </div>
             <div id="news_input" style="display: none;">
-                <label>Текст для новинок:<textarea name="rozn_text"></textarea></label>
+                <label>Текст для новинок:<textarea name="news_text"></textarea></label>
             </div>
         </div>
-        <button id="submit">Отправить</button>
+        <button id="submit-data">Отправить</button>
     </form>
     <div id="loadscreen" class="load">
         <center><p>Загрузка...</p></center>

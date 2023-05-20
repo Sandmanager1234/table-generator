@@ -17,7 +17,7 @@ def html_to_str(a: str):
 
 
 def create_zip():
-    newzip = zipfile.ZipFile('output\\zips\\result.zip', 'w', zipfile.ZIP_DEFLATED)
+    newzip = zipfile.ZipFile('output\\out\\result.zip', 'w', zipfile.ZIP_DEFLATED)
     folder = 'output\\files\\'
     files = os.listdir(folder)
     for file in files:
@@ -205,37 +205,39 @@ def create_opt_html(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, o
     return path
 
 
-def create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text):
+def create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text, rhtml_flag):
     # Создаю табличку с розницей
     clear_text = html_to_str(r_text)
     create_excel_rozn_table(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, clear_text)
-    rozn_path = create_rozn_html(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text)
-    create_pdf(rozn_path, 'rozn')
+    if rhtml_flag == True:
+        rozn_path = create_rozn_html(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text)
+        create_pdf(rozn_path, 'rozn')
 
 
-def create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag):
+def create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag, ohtml_flag):
     clear_text = html_to_str(o_text)
     # Создаю табличку с оптом
     create_excel_opt_table(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, clear_text, flag)
     # Создаю html
-    opt_path = create_opt_html(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag)
-    create_pdf(opt_path, 'opt')
+    if ohtml_flag == True:
+        opt_path = create_opt_html(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag)
+        create_pdf(opt_path, 'opt')
 
 
-def create_tables(cny, rozn_p_type, rozn_margin, rozn_r_size, opt_p_type, opt_margin, opt_r_size, r_text, o_text, text_news, or_flag, flag):
+def create_tables(cny, rozn_p_type, rozn_margin, rozn_r_size, opt_p_type, opt_margin, opt_r_size, r_text, o_text, text_news, or_flag, opt_with_rozn_flag, rhtml_flag, ohtml_flag):
     path = 'input/table2/' + os.listdir('input/table2/')[0]
     d = pdTable(path)
     vp_av = d.get_available()
     # Нахожу новинки
     vp_new = d.get_news()
 
-    if or_flag == 'ro':
-        create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text)
-        create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag)
-    elif or_flag == 'r':
-        create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text)
-    elif or_flag == 'o':
-        create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag)
+    if or_flag == 'both':
+        create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text, rhtml_flag)
+        create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, opt_with_rozn_flag, ohtml_flag)
+    elif or_flag == 'rozn':
+        create_rozn(vp_av, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, r_text, rhtml_flag)
+    elif or_flag == 'opt':
+        create_opt(vp_av, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, opt_with_rozn_flag, ohtml_flag)
     else:
         print('Error: or_flag value.')
         exit()
@@ -245,7 +247,7 @@ def create_tables(cny, rozn_p_type, rozn_margin, rozn_r_size, opt_p_type, opt_ma
     d.create_backup()
     for tb in del_news:
         if or_flag == 'o':
-            news_path = create_opt_html(tb, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, flag, news = True)
+            news_path = create_opt_html(tb, vp_new, cny, opt_p_type, opt_margin, opt_r_size, rozn_p_type, rozn_margin, rozn_r_size, o_text, opt_with_rozn_flag, news = True)
         else:
             news_path = create_rozn_html(tb, vp_new, cny, rozn_p_type, rozn_margin, rozn_r_size, text_news, news=True)
         create_photo(news_path, i)

@@ -95,8 +95,95 @@ async def get_params(input_file: UploadFile = Form(...)):
             print(ex)
         return RedirectResponse(url="/success", headers={"Location": "/success"}, status_code=302)
 
+
 @app.post('/excel-api/')
-async def gen_files():
+async def gen_files(
+    table: UploadFile = Form(default=None),
+    yuan: str = Form(default=None),
+    excel_generation: str = Form(default=None),
+    opt_magin_type: str = Form(default=None),
+    opt_extra_charge: str = Form(default=None),
+    opt_rounding: str = Form(default=None),
+    opt_text: str = Form(default=None),
+    with_no_rozn: bool = Form(default=False),
+    opt_img: UploadFile = Form(default=None),
+    opt_extra_file: bool = Form(default=False),
+    rozn_magin_type: str = Form(default=None),
+    rozn_extra_charge: str = Form(default=None),
+    rozn_rounding: str = Form(default=None),
+    rozn_text: str = Form(default=None),
+    rozn_img: UploadFile = Form(default=None),
+    rozn_extra_file: bool = Form(default=False),
+    news_text: str = Form(default=None)
+    ):
+    table_path = os.path.join("input\\table2", table.filename)
+    with open(table_path, "wb") as buffer:
+        shutil.copyfileobj(table.file, buffer)
+    if excel_generation == 'rozn':
+        rozn_path = os.path.join("input\\picrozn", rozn_img.filename)
+        with open(rozn_path, "wb") as buffer:
+            shutil.copyfileobj(rozn_img.file, buffer)
+        shop_generator.create_tables(
+            yuan,
+            rozn_magin_type,
+            rozn_extra_charge,
+            rozn_rounding,
+            opt_magin_type,
+            opt_extra_charge,
+            opt_rounding,
+            rozn_text,
+            opt_text,
+            news_text,
+            excel_generation,
+            with_no_rozn,
+            rozn_extra_file,
+            opt_extra_file
+        )
+    elif excel_generation == 'opt':
+        opt_path = os.path.join("input\\picrozn", opt_img.filename)
+        with open(opt_path, "wb") as buffer:
+            shutil.copyfileobj(opt_img.file, buffer)
+        shop_generator.create_tables(
+            yuan,
+            rozn_magin_type,
+            rozn_extra_charge,
+            rozn_rounding,
+            opt_magin_type,
+            opt_extra_charge,
+            opt_rounding,
+            rozn_text,
+            opt_text,
+            news_text,
+            excel_generation,
+            with_no_rozn,
+            rozn_extra_file,
+            opt_extra_file
+        )
+    elif excel_generation == 'both':
+        rozn_path = os.path.join("input\\picrozn", rozn_img.filename)
+        with open(rozn_path, "wb") as buffer:
+            shutil.copyfileobj(rozn_img.file, buffer)
+        opt_path = os.path.join("input\\picopt", opt_img.filename)
+        with open(opt_path, "wb") as buffer:
+            shutil.copyfileobj(opt_img.file, buffer)
+        shop_generator.create_tables(
+            yuan,
+            rozn_magin_type,
+            rozn_extra_charge,
+            rozn_rounding,
+            opt_magin_type,
+            opt_extra_charge,
+            opt_rounding,
+            rozn_text,
+            opt_text,
+            news_text,
+            excel_generation,
+            with_no_rozn,
+            rozn_extra_file,
+            opt_extra_file
+        )
+    else:
+        pass
     return {'Status': 'SUPER'}
 
 
